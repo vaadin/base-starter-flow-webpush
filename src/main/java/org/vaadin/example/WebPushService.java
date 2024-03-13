@@ -50,7 +50,7 @@ public class WebPushService {
     }
 
     public void store(Subscription subscription) {
-        getLogger().info("Subscribed to {}", subscription.endpoint);
+        getLogger().info("Subscribed to {}", subscription.endpoint());
         /*
          * Note, in a real world app you'll want to persist these
          * in the backend. Also, you probably want to know which
@@ -58,13 +58,13 @@ public class WebPushService {
          * for different users. In this demo, we'll just use
          * endpoint URL as key to store subscriptions in memory.
          */
-        endpointToSubscription.put(subscription.endpoint, subscription);
+        endpointToSubscription.put(subscription.endpoint(), subscription);
     }
 
 
     public void remove(Subscription subscription) {
-        getLogger().info("Unsubscribed {}", subscription.endpoint);
-        endpointToSubscription.remove(subscription.endpoint);
+        getLogger().info("Unsubscribed {}", subscription.endpoint());
+        endpointToSubscription.remove(subscription.endpoint());
     }
 
     public boolean isEmpty() {
