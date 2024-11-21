@@ -7,18 +7,16 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.webpush.WebPush;
 
 @Route
 public class MainView extends VerticalLayout {
 
-    private TextArea message;
+    private final TextArea message;
 
-    private Button broadcast;
-    private Button subscribe;
-    private Button unsubscribe;
+    private final Button subscribe;
+    private final Button unsubscribe;
 
     WebPushService webPushService;
 
@@ -28,7 +26,7 @@ public class MainView extends VerticalLayout {
         this.webPushService = webPushService;
         message = new TextArea("Message");
 
-        broadcast = new Button("Broadcast message");
+        Button broadcast = new Button("Broadcast message");
         subscribe = new Button("Subscribe");
         unsubscribe = new Button("UnSubscribe");
 
@@ -40,22 +38,20 @@ public class MainView extends VerticalLayout {
         pushApi = webPushService.getWebPush();
 
         subscribe.setEnabled(false);
-        subscribe.addClickListener(e -> {
-            pushApi.subscribe(subscribe.getUI().get(), subscription -> {
-                webPushService.store(subscription);
-                subscribe.setEnabled(false);
-                unsubscribe.setEnabled(true);
-            });
-        });
+        subscribe.addClickListener(e -> pushApi.subscribe(subscribe.getUI().get(),
+                subscription -> {
+            webPushService.store(subscription);
+            subscribe.setEnabled(false);
+            unsubscribe.setEnabled(true);
+        }));
 
         unsubscribe.setEnabled(false);
-        unsubscribe.addClickListener(e -> {
-            pushApi.unsubscribe(subscribe.getUI().get(), subscription -> {
-                webPushService.remove(subscription);
-                subscribe.setEnabled(true);
-                unsubscribe.setEnabled(false);
-            });
-        });
+        unsubscribe.addClickListener(e -> pushApi.unsubscribe(subscribe.getUI().get(),
+                subscription -> {
+            webPushService.remove(subscription);
+            subscribe.setEnabled(true);
+            unsubscribe.setEnabled(false);
+        }));
 
         setMargin(true);
 

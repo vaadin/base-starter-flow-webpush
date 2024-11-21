@@ -1,6 +1,5 @@
 package org.vaadin.example;
 
-import nl.martijndwars.webpush.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +10,7 @@ import java.util.Map;
 
 import com.vaadin.flow.server.webpush.WebPush;
 import com.vaadin.flow.server.webpush.WebPushMessage;
+import com.vaadin.flow.server.webpush.WebPushSubscription;
 
 @Service
 public class WebPushService {
@@ -22,7 +22,7 @@ public class WebPushService {
     @Value("${subject}")
     private String subject;
 
-    private final Map<String, Subscription> endpointToSubscription = new HashMap<>();
+    private final Map<String, WebPushSubscription> endpointToSubscription = new HashMap<>();
 
     WebPush webPush;
 
@@ -40,16 +40,15 @@ public class WebPushService {
      * @param body message body
      */
     public void notifyAll(String title, String body) {
-        endpointToSubscription.values().forEach(subscription -> {
-            webPush.sendNotification(subscription, new WebPushMessage(title, body));
-        });
+        endpointToSubscription.values().forEach(subscription ->
+                webPush.sendNotification(subscription, new WebPushMessage(title, body)));
     }
 
     private Logger getLogger() {
         return LoggerFactory.getLogger(WebPushService.class);
     }
 
-    public void store(Subscription subscription) {
+    public void store(WebPushSubscription subscription) {
         getLogger().info("Subscribed to {}", subscription.endpoint());
         /*
          * Note, in a real world app you'll want to persist these
@@ -62,7 +61,7 @@ public class WebPushService {
     }
 
 
-    public void remove(Subscription subscription) {
+    public void remove(WebPushSubscription subscription) {
         getLogger().info("Unsubscribed {}", subscription.endpoint());
         endpointToSubscription.remove(subscription.endpoint());
     }
